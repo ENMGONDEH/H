@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generate SHA-256 Hash</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            padding: 20px;
+            text-align: center;
+        }
+        h2 {
+            color: #333;
+        }
+        #hashForm {
+            max-width: 400px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        label {
+            display: block;
+            margin-bottom: 10px;
+            color: #555;
+            font-size: 16px;
+        }
+        input[type="text"] {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin-top: 10px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #hashResult {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <h2>Generate SHA-256 Hash</h2>
+    <div id="hashForm">
+        <label for="inputText">Enter a word:</label>
+        <input type="text" id="inputText" name="inputText"><br><br>
+        <button onclick="generateHash()">Generate SHA-256 Hash</button><br><br>
+        <p id="hashResult"></p>
+    </div>
+
+    <script>
+        function generateHash() {
+            var inputText = document.getElementById("inputText").value;
+            var hash = sha256(inputText);
+            hash.then(result => {
+                document.getElementById("hashResult").textContent = "SHA-256 Hash: " + result;
+            }).catch(error => {
+                console.error('Error calculating hash:', error);
+            });
+        }
+
+        // SHA-256 hashing function
+        function sha256(str) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(str);
+            return crypto.subtle.digest('SHA-256', data).then(hash => {
+                let result = '';
+                const view = new DataView(hash);
+                for (let i = 0; i < view.byteLength; i += 4) {
+                    result += ('00000000' + view.getUint32(i).toString(16)).slice(-8);
+                }
+                return result;
+            });
+        }
+    </script>
+</body>
+</html>
